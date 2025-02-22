@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 ### **4️⃣ Run the ETL Pipeline**
 ```bash
-python etl.py
+python etl_pipeline.py
 ```
 
 ## **Credits**
