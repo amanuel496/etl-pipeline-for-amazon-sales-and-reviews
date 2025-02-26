@@ -1,28 +1,33 @@
 import logging
-from src.extract import extract_data
-from src.transform import transform_data
-from src.load import load_data
+from src.extract import load_csv, download_dataset
+from src.transform import clean_data
+from src.load import load_to_db
+from src.config import DATASET_NAME, SAVE_DIRECTORY, CURRENT_DATE, CSV_FILE_PATH, CONNECTION_STRING, TABLE_NAME
 
 def etl_pipeline():
     """Runs the full ETL pipeline."""
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s %(message)s')
-    logging.info('Starting ETL pipeline...')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.info("Starting ETL pipeline...")
 
     try:
         # Extract
-        raw_data = extract_data()
-        logging.info('Data extracted successfully.')
+        if not CSV_FILE_PATH.exists():
+            download_dataset(DATASET_NAME, SAVE_DIRECTORY, CURRENT_DATE)
+        raw_data = load_csv(str(CSV_FILE_PATH))
+        logging.info("Data extraction completed.")
 
         # Transform
-        cleaned_data = transform_data(raw_data)
-        logging.info('Data transformed successfully.')
+        cleaned_data = clean_data(raw_data)
+        logging.info("Data transformation completed.")
 
         # Load
-        load_data(cleaned_data)
-        logging.info('Data loaded successfully.')
+        load_to_db(cleaned_data, CONNECTION_STRING, TABLE_NAME)
+        logging.info("Data loading completed.")
+
+        logging.info("ETL pipeline completed successfully.")
     except Exception as e:
-        logging.error(f'Error during ETL pipeline: {e}')
+        logging.error(f"ETL pipeline failed: {e}")
         raise
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     etl_pipeline()
