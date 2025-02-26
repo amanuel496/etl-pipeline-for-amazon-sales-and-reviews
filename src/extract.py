@@ -11,14 +11,13 @@ def download_dataset(dataset: str, save_path: str, date: str) -> None:
         source = kh.dataset_download(dataset)
 
         # Copy the downloaded file to the ./data/raw directory
-        current_date = pd.Timestamp.now().strftime('%Y_%m_%d')
         source_files = list(Path(source).glob("*.csv"))
         if not source_files:
             raise FileNotFoundError("No CSV file found in the downloaded dataset.")
         
         Path(save_path).mkdir(parents=True, exist_ok=True)
-        shutil.copy(Path(source)/"amazon.csv", Path(save_path)/f"amazon_{current_date}.csv")
-        logging.info(f"Dataset saved as {Path(save_path)/f'amazon_{current_date}.csv'}")
+        shutil.copy(Path(source)/"amazon.csv", Path(save_path)/f"amazon_{date}.csv")
+        logging.info(f"Dataset saved as {Path(save_path)/f'amazon_{date}.csv'}")
     except Exception as e:
         logging.error(f"Error downloading dataset: {e}")
         raise
