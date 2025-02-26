@@ -1,10 +1,12 @@
 import psycopg2
 import logging
 import pandas as pd
-from psycopg2 import excute_values
+from psycopg2.extras import execute_values
 
 def load_to_db(df: pd.DataFrame, connection_string: str, table_name: str) -> None:
     """Loads the given DataFrame into the specified PostgreSQL database table."""
+    conn = None
+    cursor = None
     try:
         # Establish a database connection
         conn = psycopg2.connect(connection_string)
@@ -17,7 +19,7 @@ def load_to_db(df: pd.DataFrame, connection_string: str, table_name: str) -> Non
 
         # Execute insert operation
         records = df.to_records(index=False)
-        excute_values(cursor, insert_query, records)
+        execute_values(cursor, insert_query, records)
 
         # Commit and close 
         conn.commit()
@@ -31,10 +33,12 @@ def load_to_db(df: pd.DataFrame, connection_string: str, table_name: str) -> Non
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
         raise
-
+    
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 # Example usage
 if __name__ == "__main__":
