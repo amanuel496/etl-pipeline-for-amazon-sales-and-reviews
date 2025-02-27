@@ -2,8 +2,10 @@ import pandas as pd
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()  # Load environment variables from .env file
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(env_path)  # Load environment variables from .env file
 
 DATASET_NAME = "karkavelrajaj/amazon-sales-dataset"
 SAVE_DIRECTORY = Path("data/raw")
