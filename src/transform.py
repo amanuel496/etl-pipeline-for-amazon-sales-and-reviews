@@ -23,6 +23,7 @@ def clean_data(df: pd.DataFrame, date: str) -> pd.DataFrame:
         df['actual_price'] = df['actual_price'].astype(str).str.replace('₹', '').str.replace(',', '').astype(float)
 
         # Validate prices and ratings
+        df['rating'] = pd.to_numeric(df['rating'], errors='coerce')
         df = df[(df['discounted_price'] >= 0) & (df['actual_price'] > 0)]
         df = df[(df['rating'] >= 0) & (df['rating'] <= 5)]
 

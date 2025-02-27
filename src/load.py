@@ -1,3 +1,4 @@
+import numpy as np
 import psycopg2
 import logging
 import pandas as pd
@@ -14,14 +15,24 @@ def load_to_db(df: pd.DataFrame, connection_string: str, table_name: str) -> Non
 
         # Create insert query
         columns = ", ".join(df.columns)
-        values_template = "%s" # Placeholder for values
-        insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({values_template})"
+        insert_query = f"INSERT INTO {table_name} ({columns}) VALUES %s"
+
+        # Convert DataFrame to list of tuples
+        records = df.to_numpy().tolist()
+
+        # Ensure proper data type conversion
+        formatted_records = [
+            tuple(
+                int(x) if isinstance(x, (np.int64, np.int32)) else
+                float(x) if isinstance(x, np.float64) else x
+                for x in record
+            ) for record in records
+        ]
 
         # Execute insert operation
-        records = df.to_records(index=False)
-        execute_values(cursor, insert_query, records)
+        execute_values(cursor, insert_query, formatted_records)
 
-        # Commit and close 
+        # Commit and close
         conn.commit()
         logging.info(f"Data successfully loaded into {table_name} table.")
     
@@ -52,6 +63,7 @@ if __name__ == "__main__":
         'category': ['electronics'],
         'discounted_price': [999.0],
         'actual_price': [1299.0],
+        'discount_percentage': ['23%'],
         'rating': [4.5],
         'rating_count': [100],
         'review_title': ['good'],

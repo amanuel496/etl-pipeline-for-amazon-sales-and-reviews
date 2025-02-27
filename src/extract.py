@@ -38,6 +38,9 @@ def load_csv(file_path: str) -> pd.DataFrame:
         if missing_columns:
             raise ValueError(f"Missing required columns: {missing_columns}")
         
+        # Ensure the DataFrame contains only the required columns
+        df = df[required_columns]
+        
         logging.info(f"Successfully loaded data from {file_path}")
         return df
     

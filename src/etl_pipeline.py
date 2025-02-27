@@ -1,8 +1,8 @@
 import logging
-from src.extract import load_csv, download_dataset
-from src.transform import clean_data
-from src.load import load_to_db
-from src.config import DATASET_NAME, SAVE_DIRECTORY, CURRENT_DATE, CSV_FILE_PATH, CONNECTION_STRING, TABLE_NAME
+from extract import load_csv, download_dataset
+from transform import clean_data
+from load import load_to_db
+from config import DATASET_NAME, SAVE_DIRECTORY, CURRENT_DATE, CSV_FILE_PATH, CONNECTION_STRING, TABLE_NAME
 
 def etl_pipeline():
     """Runs the full ETL pipeline."""
@@ -17,7 +17,7 @@ def etl_pipeline():
         logging.info("Data extraction completed.")
 
         # Transform
-        cleaned_data = clean_data(raw_data)
+        cleaned_data = clean_data(raw_data, CURRENT_DATE)
         logging.info("Data transformation completed.")
 
         # Load
